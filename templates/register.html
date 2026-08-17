@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create account | Digital Champions Intranet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <img src="{{ url_for('static', filename='assets/ipc-logo.png') }}" alt="IPC Coventry and Warwickshire — Digital Champions">
+    <h1>Create an account</h1>
+    <p class="sub">Tell us which practice you're with, and you're in.</p>
+
+    <form method="post">
+      <label for="name">Full name</label>
+      <input id="name" name="name" type="text" required autocomplete="name" value="{{ form.name or '' }}">
+
+      <label for="email">Work email</label>
+      <input id="email" name="email" type="email" required autocomplete="username" value="{{ form.email or '' }}">
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required minlength="8" autocomplete="new-password">
+      <div class="hint">At least 8 characters.</div>
+
+      <label for="place">Place</label>
+      <select id="place" name="place" required>
+        <option value="" disabled {{ 'selected' if not form.place }}>Select your place</option>
+        {% for p in places %}
+          <option value="{{ p }}" {{ 'selected' if form.place == p }}>{{ p }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="practiceName">GP practice</label>
+      <input id="practiceName" name="practiceName" type="text" required placeholder="e.g. Bedworth Health Centre" value="{{ form.practiceName or '' }}">
+
+      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+      <button type="submit">Create account</button>
+    </form>
+
+    <p class="switch">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+  </div>
+</body>
+</html>

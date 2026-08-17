@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+
+  <header class="contact-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--nhs-blue); background:#fff; border:1px solid var(--nhs-mid-grey); padding:7px 14px; border-radius:20px; margin-bottom:20px; display:inline-flex;">Get in touch</span>
+      <h1>Contact us</h1>
+      <p>Let us know if you'd like additional content or any other resources that would be helpful.</p>
+      <a class="btn btn-lime" href="mailto:contact@cwdigitalchampions.nhs.uk">Email contact@cwdigitalchampions.nhs.uk</a>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Our places</span>
+        <h2>Where to find us</h2>
+      </div>
+      <div class="place-grid">
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-north.png') }}" alt="Warwickshire North place map"><div class="label"><h3>Warwickshire-North</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-south.png') }}" alt="South Warwickshire place map"><div class="label"><h3>South-Warwickshire-Place</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-rugby.png') }}" alt="Rugby place map"><div class="label"><h3>Rugby-Place</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-coventry.png') }}" alt="Coventry place map"><div class="label"><h3>Coventry-Place</h3></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="coverage">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">The team</span>
+        <h2>Contact the Digital Champions</h2>
+        <p>Reach anyone directly, or send it to the shared mailbox and it'll land with the right person.</p>
+      </div>
+      <ul class="contact-list">
+        <li><div class="avatar">DC</div><div><p class="contact-name">CW Digital Champions</p><p class="contact-role"><a href="mailto:contact@cwdigitalchampions.nhs.uk">Digital Champions Shared Mailbox</a></p></div></li>
+        <li><div class="avatar">NC</div><div><p class="contact-name">Neil Collins</p><p class="contact-role">Digital Champions Programme Lead<br><a href="mailto:neil@cwdigitalchampions.nhs.uk">neil@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">AE</div><div><p class="contact-name">Aghogho Emesahwo</p><p class="contact-role">Digital Champion<br><a href="mailto:Aghogho@cwdigitalchampions.nhs.uk">Aghogho@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">HK</div><div><p class="contact-name">Harry Knight</p><p class="contact-role">Digital Champion<br><a href="mailto:harry@cwdigitalchampions.nhs.uk">harry@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">MA</div><div><p class="contact-name">Manjot Atwal</p><p class="contact-role">Digital Champion<br><a href="mailto:Manjot@cwdigitalchampions.nhs.uk">Manjot@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">NT</div><div><p class="contact-name">Nicoleta Turcan</p><p class="contact-role">Digital Champion<br><a href="mailto:Nicoleta@cwdigitalchampions.nhs.uk">Nicoleta@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">RS</div><div><p class="contact-name">Ryan Smith</p><p class="contact-role">Transformation Manager<br><a href="mailto:Ryan@cwdigitalchampions.nhs.uk">Ryan@cwdigitalchampions.nhs.uk</a></p></div></li>
+        <li><div class="avatar">RE</div><div><p class="contact-name">Rhys Evans</p><p class="contact-role"><a href="mailto:rhys@cwdigitalchampions.nhs.uk">rhys@cwdigitalchampions.nhs.uk</a></p></div></li>
+      </ul>
+    </div>
+  </section>
+
+{% endblock %}

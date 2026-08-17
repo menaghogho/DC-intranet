@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block content %}
+
+  <header class="hero" style="padding-bottom:56px;">
+    <div class="wrap">
+      <span class="eyebrow">Coventry &amp; Warwickshire &middot; Integrated Primary Care</span>
+      <h1>About the Digital Champions</h1>
+      <p class="lead">Welcome to the Digital Champions intranet. We're a team embedded across South Warwickshire, Rugby, Coventry and Warwickshire-North, helping practices get real value out of digital tools like NHS App, EMIS and Accurx — and make sense of the data behind every appointment. This is a space for us to share and collaborate with all practices across the ICB.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-lime" href="#team">Meet the team</a>
+        <a class="btn btn-outline" href="{{ url_for('resource') }}">See the Resource page</a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">What we do</span>
+        <h2>Hands-on support, not another portal to check.</h2>
+        <p>Digital Champions work alongside reception, clinical and management teams — running training, fixing the small things that slow a clinic down, and making sense of the data practices are already collecting.</p>
+      </div>
+      <div class="role-grid">
+        <div class="role-card">
+          <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+          <h3>NHS App &amp; Accurx</h3>
+          <p>Patient-facing tools set up properly, so more of the practice's workload can move online without extra calls to reception.</p>
+        </div>
+        <a class="role-card" href="https://swgpf.sharepoint.com/sites/DigitalChampions/SitePages/Book-EMIS-training-with-us.aspx" target="_blank" rel="noopener">
+          <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg></div>
+          <h3>EMIS Web training</h3>
+          <p>General training sessions run by the team, covering the day-to-day EMIS workflows staff actually use. <strong>Click to book.</strong></p>
+        </a>
+        <a class="role-card" href="{{ url_for('gpad') }}" target="_blank" rel="noopener">
+          <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 3v6l4 2M12 21a9 9 0 100-18 9 9 0 000 18z"/></svg></div>
+          <h3>Understanding GPAD</h3>
+          <p>Plain-English guidance on how appointment slots get recorded and reported nationally.</p>
+        </a>
+        <div class="role-card">
+          <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg></div>
+          <h3>AI &amp; digital tools</h3>
+          <p>Curated resources on the newer AI tools appearing in general practice, and how to use them safely.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="coverage" id="partnership">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Partnership working</span>
+        <h2>Four places, one team.</h2>
+        <p>The Digital Champions cover every place across the ICB, working in partnership with each practice on what matters most to them locally.</p>
+      </div>
+      <div class="place-grid">
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-north.png') }}" alt="Warwickshire North place map"><div class="label"><h3>Warwickshire-North</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-south.png') }}" alt="South Warwickshire place map"><div class="label"><h3>South-Warwickshire-Place</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-rugby.png') }}" alt="Rugby place map"><div class="label"><h3>Rugby-Place</h3></div></div>
+        <div class="place-card"><img src="{{ url_for('static', filename='assets/map-coventry.png') }}" alt="Coventry place map"><div class="label"><h3>Coventry-Place</h3></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="team">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Meet the team</span>
+        <h2>Who to ask.</h2>
+        <p>Reach anyone directly, or send it to the shared mailbox and it'll land with the right person — see the <a href="{{ url_for('contact') }}" style="color:var(--teal-deep); font-weight:700;">Contact page</a> for details.</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--ink);">NC</div>
+          <h3>Neil Collins</h3>
+          <p class="role">Digital Champions Programme Lead<br><a href="mailto:neil@cwdigitalchampions.nhs.uk">neil@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--teal-deep);">RS</div>
+          <h3>Ryan Smith</h3>
+          <p class="role">Transformation Manager<br><a href="mailto:Ryan@cwdigitalchampions.nhs.uk">Ryan@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--lime-deep);">AE</div>
+          <h3>Aghogho Emesahwo</h3>
+          <p class="role">Digital Champion<br><a href="mailto:Aghogho@cwdigitalchampions.nhs.uk">Aghogho@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--teal);">HK</div>
+          <h3>Harry Knight</h3>
+          <p class="role">Digital Champion<br><a href="mailto:harry@cwdigitalchampions.nhs.uk">harry@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--nhs-green);">MA</div>
+          <h3>Manjot Atwal</h3>
+          <p class="role">Digital Champion<br><a href="mailto:Manjot@cwdigitalchampions.nhs.uk">Manjot@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:#425563;">NT</div>
+          <h3>Nicoleta Turcan</h3>
+          <p class="role">Digital Champion<br><a href="mailto:Nicoleta@cwdigitalchampions.nhs.uk">Nicoleta@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--nhs-light-blue);">RE</div>
+          <h3>Rhys Evans</h3>
+          <p class="role"><a href="mailto:rhys@cwdigitalchampions.nhs.uk">rhys@cwdigitalchampions.nhs.uk</a></p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--nhs-dark-blue);">DC</div>
+          <h3>CW Digital Champions</h3>
+          <p class="role"><a href="mailto:contact@cwdigitalchampions.nhs.uk">Shared mailbox</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta-band">
+        <h2>Want something adding to the Resource Centre?</h2>
+        <p>Training material, guides, EMIS content — if it would help your practice, let the team know and it'll go up for everyone.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-lime" href="mailto:contact@cwdigitalchampions.nhs.uk">Email the team</a>
+          <a class="btn btn-outline" href="{{ url_for('resource') }}">Browse the Resource Centre</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

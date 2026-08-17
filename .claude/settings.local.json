@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p templates static/css static/assets static/video)",
+      "Bash(cp server/public/assets/ipc-logo.png static/assets/)",
+      "Bash(cp server/public/assets/map-coventry.png static/assets/)",
+      "Bash(cp server/public/assets/map-north.png static/assets/)",
+      "Bash(cp server/public/assets/map-rugby.png static/assets/)",
+      "Bash(curl -s -X POST http://localhost:5000/register -d name=Dup -d email=testuser@example.com -d password=testpass123 -d place=Coventry -d 'practiceName=Test Practice')",
+      "Bash(curl -s -X POST http://localhost:5000/login -d email=testuser@example.com -d password=wrongpass)",
+      "Bash(.venv/Scripts/python.exe -c ' *)",
+      "Bash(taskkill *)",
+      "Bash(\".venv/Scripts/python.exe\" \"C:\\\\Users\\\\AGHOGH~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Aghogho-Emesahwo-Downloads-digital-champions\\\\ccbbd1ee-3867-4867-8fee-8626cf74af0b\\\\scratchpad\\\\build_preview.py\")",
+      "WebFetch(domain:southwarwickshiregps.nhs.uk)",
+      "Artifact",
+      "PowerShell(Get-Process *)"
+    ]
+  }
+}

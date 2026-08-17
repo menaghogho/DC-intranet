@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Digital Champions{% endblock %} | Practice Intranet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="utility-bar">
+    <div class="utility-inner">
+      <div class="acct">
+        <a href="mailto:contact@cwdigitalchampions.nhs.uk">contact@cwdigitalchampions.nhs.uk</a>
+        {% if current_user %}
+          <span>Signed in as {{ current_user.name }}{% if current_user.practice_name %} &middot; {{ current_user.practice_name }}{% endif %}</span>
+        {% endif %}
+      </div>
+      {% if current_user %}
+        <form method="post" action="{{ url_for('logout') }}" class="signout-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit" class="linklike">Sign out</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="topbar">
+    <div class="wrap">
+      <a class="brand" href="{{ url_for('about') }}">
+        <img src="{{ url_for('static', filename='assets/ipc-logo.png') }}" alt="IPC Coventry and Warwickshire — Digital Champions">
+        <span>Digital Champions</span>
+      </a>
+      <ul class="primary-nav">
+        <li class="nav-item">
+          <a href="{{ url_for('about') }}" class="{{ 'active' if request.endpoint == 'about' }}">About <span class="chev">&#9662;</span></a>
+          <div class="dropdown">
+            <a href="{{ url_for('about') }}">About Digital Champions</a>
+            <a href="{{ url_for('about') }}#team">Our team</a>
+            <a href="{{ url_for('about') }}#partnership">Partnership working</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('resource') }}" class="{{ 'active' if request.endpoint == 'resource' }}">Resource <span class="chev">&#9662;</span></a>
+          <div class="dropdown">
+            <a href="{{ url_for('resource') }}">All articles</a>
+            <a href="{{ url_for('resource') }}#news">News</a>
+            <a href="{{ url_for('resource') }}#resources">Case studies</a>
+            <a href="{{ url_for('resource') }}#team-insight">Team insights</a>
+          </div>
+        </li>
+        <li><a href="{{ url_for('contact') }}" class="{{ 'active' if request.endpoint == 'contact' }}">Contact</a></li>
+        {% if current_user and current_user.is_admin %}
+          <li><a href="{{ url_for('admin_staff') }}" class="{{ 'active' if request.endpoint == 'admin_staff' }}">Admin</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+
+  {% block content %}{% endblock %}
+
+  <footer>Digital Champions Practice Intranet &middot; built for internal use</footer>
+
+  <div class="chat-widget">
+    <button type="button" class="chat-fab" id="chatFab" aria-expanded="false" aria-controls="chatPanel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span>Find resources</span>
+    </button>
+
+    <div class="chat-panel" id="chatPanel" hidden>
+      <div class="chat-panel-head">
+        <div>
+          <strong>Find resources</strong>
+          <span>Ask where something lives on the site</span>
+        </div>
+        <button type="button" class="chat-close" id="chatClose" aria-label="Close chat">&times;</button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg chat-msg-bot">
+          Hi{% if current_user %} {{ current_user.name.split(' ')[0] }}{% endif %} — ask me where to find something,
+          like a resource, guide, or the right person to contact.
+        </div>
+        <div class="chat-suggestions">
+          <button type="button" class="chip">Where's the GPAD guide?</button>
+          <button type="button" class="chip">Where's EMIS training?</button>
+          <button type="button" class="chip">Who do I contact about NHS App?</button>
+          <button type="button" class="chip">Where are the place maps?</button>
+        </div>
+      </div>
+
+      <form class="chat-input-row" id="chatForm">
+        <input type="text" id="chatInput" placeholder="Ask a question…" autocomplete="off" maxlength="2000">
+        <button type="submit" id="chatSend">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var fab = document.getElementById("chatFab");
+      var panel = document.getElementById("chatPanel");
+      var closeBtn = document.getElementById("chatClose");
+      var messages = document.getElementById("chatMessages");
+      var form = document.getElementById("chatForm");
+      var input = document.getElementById("chatInput");
+      var sendBtn = document.getElementById("chatSend");
+      var history = [];
+
+      function openPanel() {
+        panel.hidden = false;
+        fab.setAttribute("aria-expanded", "true");
+        input.focus();
+      }
+      function closePanel() {
+        panel.hidden = true;
+        fab.setAttribute("aria-expanded", "false");
+      }
+      fab.addEventListener("click", function () {
+        panel.hidden ? openPanel() : closePanel();
+      });
+      closeBtn.addEventListener("click", closePanel);
+
+      function addMessage(text, who) {
+        var el = document.createElement("div");
+        el.className = "chat-msg chat-msg-" + who;
+        el.textContent = text;
+        messages.appendChild(el);
+        messages.scrollTop = messages.scrollHeight;
+        return el;
+      }
+
+      function addBotMessage(text, link, label) {
+        var el = document.createElement("div");
+        el.className = "chat-msg chat-msg-bot";
+
+        var textEl = document.createElement("div");
+        textEl.textContent = text;
+        el.appendChild(textEl);
+
+        if (link) {
+          var a = document.createElement("a");
+          a.className = "chat-link-btn";
+          a.href = link;
+          a.textContent = label || "Open page";
+          el.appendChild(a);
+        }
+
+        messages.appendChild(el);
+        messages.scrollTop = messages.scrollHeight;
+        return el;
+      }
+
+      function send(text) {
+        text = text.trim();
+        if (!text) return;
+        addMessage(text, "user");
+        history.push({ role: "user", content: text });
+        input.value = "";
+        input.disabled = true;
+        sendBtn.disabled = true;
+        var thinking = addMessage("Thinking…", "bot thinking");
+
+        fetch("{{ url_for('chat') }}", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, history: history }),
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            thinking.remove();
+            var reply = data.reply || data.error || "Something went wrong — try again.";
+            addBotMessage(reply, data.link, data.label);
+            history.push({ role: "assistant", content: reply });
+          })
+          .catch(function () {
+            thinking.remove();
+            addMessage("Couldn't reach the assistant — check your connection and try again.", "bot");
+          })
+          .finally(function () {
+            input.disabled = false;
+            sendBtn.disabled = false;
+            input.focus();
+          });
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        send(input.value);
+      });
+
+      messages.querySelectorAll(".chip").forEach(function (chip) {
+        chip.addEventListener("click", function () {
+          send(chip.textContent);
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>

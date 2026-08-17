@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Understanding GPAD | A guide for GP practices</title>
+<meta name="description" content="A plain-English guide to General Practice Appointments Data (GPAD) for reception, clinical and management teams.">
+<style>
+  :root{
+    --nhs-blue:#005EB8;
+    --nhs-dark-blue:#003087;
+    --nhs-light-blue:#41B6E6;
+    --nhs-green:#009639;
+    --nhs-purple:#330072;
+    --nhs-red:#DA291C;
+    --nhs-yellow:#FFB81C;
+    --nhs-grey:#425563;
+    --nhs-pale-grey:#F0F4F5;
+    --nhs-mid-grey:#D8DDE0;
+    --white:#FFFFFF;
+    --ink:#1A2226;
+    --radius:6px;
+    --max:1180px;
+    --focus: 3px solid #FFB81C;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:Arial, "Helvetica Neue", Helvetica, sans-serif;
+    color:var(--ink);
+    background:var(--white);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight:800;
+    line-height:1.15;
+    letter-spacing:-0.01em;
+    color:var(--nhs-dark-blue);
+    margin:0 0 .5em;
+  }
+  p{margin:0 0 1em;}
+  a{color:var(--nhs-blue);}
+  img,svg{max-width:100%;display:block;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 24px;}
+  :focus-visible{outline:var(--focus); outline-offset:2px;}
+  button{font-family:inherit;}
+
+  /* Skip link */
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:var(--nhs-dark-blue); color:#fff;
+    padding:12px 20px; z-index:200; border-radius:0 0 6px 0;
+  }
+  .skip-link:focus{left:0;}
+
+  /* ===== NAV ===== */
+  header.site-header{
+    position:sticky; top:0; z-index:100;
+    background:var(--nhs-dark-blue);
+    border-bottom:4px solid var(--nhs-yellow);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 24px; max-width:var(--max); margin:0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:12px; color:#fff; text-decoration:none;}
+  .brand-mark{
+    width:42px; height:42px; background:var(--white); border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--nhs-dark-blue); font-weight:800; font-size:15px; letter-spacing:-0.03em;
+    flex-shrink:0;
+  }
+  .brand-text{display:flex; flex-direction:column; line-height:1.1;}
+  .brand-text strong{font-size:19px; letter-spacing:-0.01em;}
+  .brand-text span{font-size:12px; color:var(--nhs-light-blue); font-weight:600;}
+
+  nav.primary-nav ul{
+    list-style:none; display:flex; gap:4px; margin:0; padding:0;
+  }
+  nav.primary-nav a{
+    color:#fff; text-decoration:none; font-size:15px; font-weight:600;
+    padding:10px 14px; border-radius:4px; display:inline-block;
+  }
+  nav.primary-nav a:hover, nav.primary-nav a:focus-visible{background:rgba(255,255,255,0.14);}
+
+  .nav-toggle{
+    display:none; background:transparent; border:2px solid #fff; color:#fff;
+    border-radius:4px; padding:8px 10px; font-size:14px; font-weight:700; cursor:pointer;
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    background:linear-gradient(160deg, var(--nhs-dark-blue) 0%, #001F5C 100%);
+    color:#fff; padding:64px 0 48px; overflow:hidden; position:relative;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:48px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; background:rgba(255,184,28,0.15);
+    color:var(--nhs-yellow); font-weight:700; font-size:13px; letter-spacing:.06em;
+    text-transform:uppercase; padding:6px 12px; border-radius:20px; margin-bottom:18px;
+  }
+  .hero h1{color:#fff; font-size:clamp(32px,4.4vw,50px); margin-bottom:.4em;}
+  .hero p.lead{font-size:18px; color:#D8E4F5; max-width:52ch;}
+  .hero-ctas{display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;}
+  .btn{
+    display:inline-block; padding:12px 22px; border-radius:6px; font-weight:700;
+    text-decoration:none; font-size:15px; cursor:pointer; border:2px solid transparent;
+    transition:transform .12s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--nhs-yellow); color:var(--nhs-dark-blue);}
+  .btn-secondary{background:transparent; color:#fff; border-color:#fff;}
+
+  /* Signature element: appointment strip */
+  .strip-card{
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18);
+    border-radius:14px; padding:20px;
+  }
+  .strip-card h2{color:#fff; font-size:15px; text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px;}
+  .strip-card .sub{color:#B7C7E3; font-size:13px; margin-bottom:16px;}
+  .strip{
+    display:flex; gap:5px; height:56px; border-radius:8px; overflow:hidden; margin-bottom:14px;
+  }
+  .slot{
+    flex:1; border:none; cursor:pointer; position:relative;
+    transition:flex-grow .18s ease, filter .15s ease;
+    filter:brightness(1);
+  }
+  .slot:hover, .slot:focus-visible{filter:brightness(1.25); flex-grow:1.6;}
+  .strip-legend{display:flex; flex-wrap:wrap; gap:10px 16px; font-size:12.5px; color:#E4ECF9;}
+  .strip-legend .item{display:flex; align-items:center; gap:6px;}
+  .swatch{width:11px; height:11px; border-radius:3px; display:inline-block;}
+
+  /* ===== SECTIONS ===== */
+  section{padding:64px 0;}
+  .section-pale{background:var(--nhs-pale-grey);}
+  .section-head{max-width:74ch; margin-bottom:36px;}
+  .section-head .kicker{
+    color:var(--nhs-blue); font-weight:700; font-size:13px; text-transform:uppercase;
+    letter-spacing:.07em; margin-bottom:8px; display:block;
+  }
+  .section-head h2{font-size:clamp(26px,3vw,34px);}
+  .section-head p{color:var(--nhs-grey); font-size:17px;}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:start;}
+  .info-card{
+    background:#fff; border:1px solid var(--nhs-mid-grey); border-left:5px solid var(--nhs-blue);
+    border-radius:var(--radius); padding:22px 24px;
+  }
+  .info-card h3{font-size:17px; margin-bottom:8px;}
+  .info-card p{color:var(--nhs-grey); font-size:15px; margin:0;}
+  .stack{display:flex; flex-direction:column; gap:16px;}
+
+  .why-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:18px;}
+  .why-card{
+    background:#fff; border-radius:var(--radius); padding:22px; border:1px solid var(--nhs-mid-grey);
+  }
+  .why-card .icon{
+    width:44px; height:44px; border-radius:8px; background:var(--nhs-dark-blue); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:14px;
+  }
+  .why-card h3{font-size:16px;}
+  .why-card p{font-size:14.5px; color:var(--nhs-grey); margin:0;}
+
+  /* Search box */
+  .search-box{
+    display:flex; align-items:center; gap:10px; background:#fff; border:2px solid var(--nhs-dark-blue);
+    border-radius:8px; padding:6px 6px 6px 16px; max-width:560px; margin-bottom:8px;
+  }
+  .search-box input{
+    border:none; outline:none; flex:1; font-size:16px; padding:8px 0; font-family:inherit;
+  }
+  .search-box button{
+    background:var(--nhs-blue); color:#fff; border:none; padding:10px 18px; border-radius:5px;
+    font-weight:700; cursor:pointer; font-size:14px;
+  }
+  .search-meta{font-size:14px; color:var(--nhs-grey); margin-bottom:28px; min-height:20px;}
+  .no-results{
+    background:#fff; border:1px dashed var(--nhs-mid-grey); border-radius:8px; padding:24px;
+    color:var(--nhs-grey); text-align:center; display:none;
+  }
+  .no-results.show{display:block;}
+
+  /* Category cards */
+  .cat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .cat-card{
+    background:#fff; border:1px solid var(--nhs-mid-grey); border-radius:10px; overflow:hidden;
+    border-top:6px solid var(--cat-color, var(--nhs-blue));
+  }
+  .cat-card.is-hidden{display:none;}
+  .cat-card-head{padding:20px 20px 14px; cursor:pointer; background:transparent; border:none; width:100%; text-align:left; display:flex; gap:14px; align-items:flex-start;}
+  .cat-code{
+    font-family:"Courier New", monospace; font-weight:800; font-size:12px; color:#fff;
+    background:var(--cat-color, var(--nhs-blue)); padding:4px 8px; border-radius:4px; letter-spacing:.03em;
+    flex-shrink:0; margin-top:2px;
+  }
+  .cat-card h3{font-size:17px; margin-bottom:4px;}
+  .cat-card .desc{font-size:14.5px; color:var(--nhs-grey); margin:0;}
+  .cat-toggle-hint{font-size:12.5px; color:var(--nhs-blue); font-weight:700; margin-top:8px;}
+  .cat-body{
+    max-height:0; overflow:hidden; transition:max-height .28s ease; padding:0 20px;
+  }
+  .cat-card.open .cat-body{max-height:900px; padding:0 20px 20px;}
+  .cat-card.open .cat-toggle-hint{display:none;}
+  .role-tabs{display:flex; gap:6px; border-bottom:2px solid var(--nhs-pale-grey); margin-bottom:14px; flex-wrap:wrap;}
+  .role-tab{
+    background:transparent; border:none; padding:8px 10px; font-size:13px; font-weight:700;
+    color:var(--nhs-grey); cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px;
+  }
+  .role-tab[aria-selected="true"]{color:var(--cat-color, var(--nhs-blue)); border-bottom-color:var(--cat-color, var(--nhs-blue));}
+  .role-panel{display:none; font-size:14.5px; color:var(--ink);}
+  .role-panel.active{display:block;}
+  .role-panel ul{margin:0; padding-left:18px;}
+  .role-panel li{margin-bottom:8px;}
+  mark{background:#FFF3C4; padding:0 2px; border-radius:2px;}
+
+  /* FAQ */
+  .faq-item{border-bottom:1px solid var(--nhs-mid-grey);}
+  .faq-item.is-hidden{display:none;}
+  .faq-q{
+    width:100%; text-align:left; background:transparent; border:none; padding:18px 4px;
+    display:flex; justify-content:space-between; align-items:center; gap:16px;
+    font-size:16.5px; font-weight:700; color:var(--nhs-dark-blue); cursor:pointer;
+  }
+  .faq-q .chev{transition:transform .2s ease; flex-shrink:0; color:var(--nhs-blue); font-size:20px;}
+  .faq-item.open .faq-q .chev{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .faq-item.open .faq-a{max-height:400px;}
+  .faq-a p{padding:0 4px 18px; color:var(--nhs-grey); font-size:15px; max-width:70ch;}
+
+  /* Footer */
+  footer{background:var(--nhs-dark-blue); color:#cfe0f5; padding:40px 0 28px; font-size:14px;}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;}
+  footer a{color:#fff;}
+  footer .legal{color:#8fa9d0; margin-top:18px; font-size:12.5px;}
+
+  /* Responsive */
+  @media (max-width:900px){
+    .hero-grid{grid-template-columns:1fr;}
+    .two-col{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:repeat(2,1fr);}
+    .cat-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:700px){
+    nav.primary-nav{
+      position:absolute; top:100%; left:0; right:0; background:var(--nhs-dark-blue);
+      flex-direction:column; padding:8px 24px 16px; display:none; border-bottom:4px solid var(--nhs-yellow);
+    }
+    nav.primary-nav.open{display:block;}
+    nav.primary-nav ul{flex-direction:column;}
+    .nav-toggle{display:inline-block;}
+    .why-grid{grid-template-columns:1fr;}
+    .cat-grid{grid-template-columns:1fr;}
+    header.site-header{position:relative;}
+    .hero{padding:40px 0 36px;}
+    section{padding:44px 0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  /* ===== TAXONOMY EMBED (from GPAD taxonomy explainer) ===== */
+  .taxonomy-embed{
+    --tax-ink:#0B2545; --tax-paper:#F6F3EC; --tax-card:#FFFFFF; --tax-line:#DDD6C6;
+    --tax-blue:#1D4E89; --tax-teal:#146B60; --tax-clay:#B5502A; --tax-plum:#5C3B6B; --tax-muted:#5B6472;
+    background:var(--tax-paper); color:var(--tax-ink); border-radius:12px; overflow:hidden;
+    border:1px solid var(--tax-line); margin-top:8px;
+  }
+  .taxonomy-embed *,.taxonomy-embed *::before,.taxonomy-embed *::after{box-sizing:border-box;}
+  .taxonomy-embed .tax-wrap{max-width:960px; margin:0 auto; padding:0 24px;}
+  .taxonomy-embed button{font-family:inherit; cursor:pointer;}
+  .taxonomy-embed .mono{font-family:"Courier New",monospace;}
+
+  .taxonomy-embed .tax-hero{padding:44px 0 36px; border-bottom:1px solid var(--tax-line);}
+  .taxonomy-embed .tax-eyebrow{
+    font-family:"Courier New",monospace; text-transform:uppercase; letter-spacing:.14em;
+    font-size:12px; color:var(--tax-clay); font-weight:700; margin-bottom:14px;
+  }
+  .taxonomy-embed h3.tax-title{font-size:clamp(22px,3vw,28px); margin:0 0 14px; line-height:1.2; font-weight:700; color:var(--tax-ink);}
+  .taxonomy-embed .tax-lead{max-width:62ch; color:var(--tax-muted); font-size:16px; margin:0 0 26px;}
+
+  .taxonomy-embed .ticket{
+    background:var(--tax-card); border:1px solid var(--tax-ink); border-radius:2px;
+    display:flex; position:relative; overflow:hidden;
+    box-shadow:6px 6px 0 rgba(11,37,69,0.08);
+  }
+  .taxonomy-embed .ticket::before{
+    content:""; position:absolute; left:196px; top:0; bottom:0; width:0;
+    border-left:2px dashed var(--tax-line);
+  }
+  .taxonomy-embed .ticket-main{flex:1; padding:22px 26px;}
+  .taxonomy-embed .ticket-stub{width:196px; padding:22px 18px; background:var(--tax-ink); color:var(--tax-paper); flex-shrink:0;}
+  .taxonomy-embed .ticket-label{font-family:"Courier New",monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--tax-muted); margin-bottom:3px;}
+  .taxonomy-embed .ticket-stub .ticket-label{color:#AEB9CC;}
+  .taxonomy-embed .ticket-row{margin-bottom:14px;}
+  .taxonomy-embed .ticket-row:last-child{margin-bottom:0;}
+  .taxonomy-embed .ticket-value{font-size:16px; font-weight:600;}
+  .taxonomy-embed .ticket-stub .ticket-value{font-size:14px;}
+  .taxonomy-embed .ticket-stub .stub-appt{font-family:"Courier New",monospace; font-size:11px; color:#7C93B5; margin-top:16px;}
+
+  .taxonomy-embed .jumpnav{display:flex; gap:8px; flex-wrap:wrap; margin-top:26px;}
+  .taxonomy-embed .jumpnav a{
+    font-family:"Courier New",monospace; font-size:12px; text-decoration:none;
+    color:var(--tax-ink); border:1px solid var(--tax-line); border-radius:20px; padding:6px 14px;
+    background:var(--tax-card);
+  }
+  .taxonomy-embed .jumpnav a:hover{border-color:var(--tax-ink);}
+
+  .taxonomy-embed .tax-section{padding:36px 0; border-bottom:1px solid var(--tax-line);}
+  .taxonomy-embed .tax-section:last-child{border-bottom:none;}
+  .taxonomy-embed .section-tag{
+    font-family:"Courier New",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--tax-muted); margin-bottom:6px;
+  }
+  .taxonomy-embed h4.tax-h2{font-size:21px; margin:0 0 8px; font-weight:700; color:var(--tax-ink);}
+  .taxonomy-embed .section-note{color:var(--tax-muted); font-size:14.5px; max-width:66ch; margin:0 0 24px;}
+
+  .taxonomy-embed .field-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px;}
+  .taxonomy-embed .field-card{
+    background:var(--tax-card); border:1px solid var(--tax-line); border-left:4px solid var(--accent,var(--tax-blue));
+    border-radius:3px; text-align:left; width:100%; padding:0;
+  }
+  .taxonomy-embed .field-head{
+    width:100%; background:none; border:none; padding:16px 18px; text-align:left;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+  }
+  .taxonomy-embed .field-head h3{font-size:15.5px; margin:0; font-weight:600; color:var(--tax-ink);}
+  .taxonomy-embed .field-head .plus{color:var(--accent,var(--tax-blue)); font-size:20px; font-weight:400; flex-shrink:0; transition:transform .15s ease;}
+  .taxonomy-embed .field-card.open .field-head .plus{transform:rotate(45deg);}
+  .taxonomy-embed .field-body{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .taxonomy-embed .field-card.open .field-body{max-height:300px;}
+  .taxonomy-embed .field-body p{margin:0; padding:0 18px 16px; color:var(--tax-muted); font-size:14px;}
+
+  .taxonomy-embed .group{
+    background:var(--tax-card); border:1px solid var(--tax-ink); border-radius:3px; margin-bottom:16px; overflow:hidden;
+  }
+  .taxonomy-embed .group-head{
+    width:100%; background:var(--accent,var(--tax-blue)); color:#fff; border:none;
+    padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; text-align:left;
+  }
+  .taxonomy-embed .group-head-text h3{margin:0 0 4px; font-size:17.5px; color:#fff; font-weight:700;}
+  .taxonomy-embed .group-head-text p{margin:0; font-size:13px; color:rgba(255,255,255,0.82); max-width:56ch;}
+  .taxonomy-embed .group-count{
+    font-family:"Courier New",monospace; font-size:12px; background:rgba(255,255,255,0.16);
+    padding:5px 10px; border-radius:20px; flex-shrink:0; white-space:nowrap;
+  }
+  .taxonomy-embed .group-chevron{font-size:22px; flex-shrink:0; transition:transform .2s ease; color:#fff;}
+  .taxonomy-embed .group.open .group-chevron{transform:rotate(180deg);}
+  .taxonomy-embed .group-body{max-height:0; overflow:hidden; transition:max-height .35s ease;}
+  .taxonomy-embed .group.open .group-body{max-height:4000px;}
+  .taxonomy-embed .cat-list{padding:8px 14px 14px;}
+  .taxonomy-embed .cat-item{border-bottom:1px solid var(--tax-line);}
+  .taxonomy-embed .cat-item:last-child{border-bottom:none;}
+  .taxonomy-embed .cat-btn{
+    width:100%; background:none; border:none; padding:13px 8px; text-align:left;
+    display:flex; align-items:center; gap:12px; font-size:15px; color:var(--tax-ink);
+  }
+  .taxonomy-embed .cat-btn .num{
+    font-family:"Courier New",monospace; font-size:11px; color:var(--tax-muted); flex-shrink:0; width:20px;
+  }
+  .taxonomy-embed .cat-btn span.name{flex:1; font-weight:600;}
+  .taxonomy-embed .cat-btn .chev{color:var(--accent,var(--tax-blue)); flex-shrink:0; transition:transform .15s ease;}
+  .taxonomy-embed .cat-item.open .cat-btn .chev{transform:rotate(90deg);}
+  .taxonomy-embed .cat-detail{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .taxonomy-embed .cat-item.open .cat-detail{max-height:600px;}
+  .taxonomy-embed .cat-detail-inner{padding:0 8px 18px 40px;}
+  .taxonomy-embed .cat-detail-inner p{margin:0 0 10px; color:var(--tax-muted); font-size:14px; max-width:60ch;}
+  .taxonomy-embed .cat-detail-inner .examples{
+    font-size:13px; color:var(--tax-ink); background:var(--tax-paper); border:1px solid var(--tax-line);
+    border-radius:3px; padding:8px 12px; display:inline-block;
+  }
+  .taxonomy-embed .cat-detail-inner .examples b{font-family:"Courier New",monospace; font-weight:700; text-transform:uppercase; font-size:10.5px; letter-spacing:.06em; color:var(--tax-muted); display:block; margin-bottom:3px;}
+
+  .taxonomy-embed .tax-footer{padding:28px 0 36px; color:var(--tax-muted); font-size:13px;}
+  .taxonomy-embed .tax-footer a{color:var(--tax-ink);}
+
+  @media (max-width:560px){
+    .taxonomy-embed .ticket{flex-direction:column;}
+    .taxonomy-embed .ticket::before{display:none;}
+    .taxonomy-embed .ticket-stub{width:100%; border-top:2px dashed var(--tax-line);}
+  }
+
+  /* ===== VIDEO SECTION ===== */
+  .video-wrap{
+    background:var(--nhs-dark-blue); border-radius:12px; overflow:hidden; position:relative;
+    max-width:860px; margin:0 auto;
+  }
+  .video-frame{position:relative; width:100%; aspect-ratio:16/9; background:linear-gradient(145deg,#001F5C,var(--nhs-dark-blue));}
+  .video-frame video{width:100%; height:100%; display:block; object-fit:cover;}
+  .video-caption{color:#cfe0f5; font-size:14px; padding:16px 22px; background:rgba(0,0,0,0.15);}
+  .video-caption strong{color:#fff;}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+<div style="background:#1A2226; padding:8px 24px;"><a href="{{ url_for('resource') }}" style="color:#fff; font-size:13px; text-decoration:none; font-weight:700;">&larr; Back to Resource</a></div>
+
+<header class="site-header">
+  <div class="nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">GPAD</span>
+      <span class="brand-text"><strong>Understanding GPAD</strong><span>A guide for general practice teams</span></span>
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" id="navToggle">Menu ▾</button>
+    <nav class="primary-nav" id="primary-nav" aria-label="Primary">
+      <ul>
+        <li><a href="#what-is-gpad">What is GPAD?</a></li>
+        <li><a href="#why-it-matters">Why it matters</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#video">Watch</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#explore">Search</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">For reception, clinical &amp; management teams</span>
+        <h1>Every appointment slot tells the NHS a story. GPAD makes sure the whole story gets told.</h1>
+        <p class="lead">General Practice Appointments Data (GPAD) is how your appointment book turns into a national
+          picture of workload. Get the category right, and the work you do — routine, urgent, admin, or
+          unplanned — actually counts.</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#categories">Explore the categories</a>
+          <a class="btn btn-secondary" href="#what-is-gpad">What is GPAD?</a>
+        </div>
+      </div>
+      <div class="strip-card">
+        <h2>Try it: today's appointment book</h2>
+        <p class="sub">Click a slot to jump straight to that category.</p>
+        <div class="strip" id="heroStrip"></div>
+        <div class="strip-legend" id="heroLegend"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT IS GPAD -->
+  <section id="what-is-gpad">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">The basics</span>
+        <h2>What is GPAD?</h2>
+        <p>GPAD stands for <strong>General Practice Appointments Data</strong>. It's the NHS England programme
+          that collects appointment data directly from clinical systems in every practice and turns it into a
+          standard, comparable national dataset.</p>
+      </div>
+      <div class="two-col">
+        <div class="stack">
+          <div class="info-card">
+            <h3>It comes from your appointment book</h3>
+            <p>Every slot booked in your clinical system — telephone, face-to-face, home visit or online — is
+              extracted automatically. No extra forms, no separate spreadsheets.</p>
+          </div>
+          <div class="info-card">
+            <h3>It relies on a shared set of categories</h3>
+            <p>Because every practice's local slot types are different (and often inconsistent), GPAD maps them
+              to a small, standard set of national categories so activity can be compared fairly, practice to
+              practice and region to region.</p>
+          </div>
+          <div class="info-card">
+            <h3>It's already part of your day-to-day system</h3>
+            <p>When a receptionist books a slot type, or a clinician selects an outcome, they're already
+              contributing to GPAD — the category chosen at that moment is what feeds the national picture.</p>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="info-card">
+            <h3>It's used at every level</h3>
+            <p>Individual practices use their own GPAD dashboard to understand their own workload. Primary Care
+              Networks and Integrated Care Boards use aggregated data to plan capacity across a wider area.
+              Nationally, it informs funding and policy decisions.</p>
+          </div>
+          <div class="info-card">
+            <h3>It's about accuracy, not surveillance</h3>
+            <p>GPAD exists to make sure general practice's workload is properly recognised — including the
+              parts that don't show up in a simple appointment count, like clinical admin, triage and
+              unplanned same-day care.</p>
+          </div>
+          <div class="info-card">
+            <h3>Data quality is a team effort</h3>
+            <p>Good GPAD data depends on everyone — reception staff selecting the right slot type, clinicians
+              confirming or amending it, and practice managers checking the dashboard for mapping gaps.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT MATTERS -->
+  <section id="why-it-matters" class="section-pale">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">The bigger picture</span>
+        <h2>Why GPAD matters</h2>
+        <p>Accurate GPAD data protects general practice by making its true workload visible — and visible
+          workload is workload that can be planned for, funded and supported.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="icon">1</div>
+          <h3>It captures the full workload</h3>
+          <p>Triage calls, clinical admin and care-related contacts often go unrecorded in simple appointment
+            counts. Correct categorisation means this work is finally counted.</p>
+        </div>
+        <div class="why-card">
+          <div class="icon">2</div>
+          <h3>It shapes funding and workforce decisions</h3>
+          <p>Commissioners and national teams use GPAD to understand where demand is rising, and to plan
+            staffing and investment accordingly.</p>
+        </div>
+        <div class="why-card">
+          <div class="icon">3</div>
+          <h3>It supports contract requirements</h3>
+          <p>National categories are used to check how patients identified as clinically urgent are being
+            managed, including same-day access commitments.</p>
+        </div>
+        <div class="why-card">
+          <div class="icon">4</div>
+          <h3>It gives practices their own insight</h3>
+          <p>Your practice-level GPAD dashboard shows patterns in demand across the week and year — useful for
+            your own rota and access planning, not just for reporting upward.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH / EXPLORE -->
+  <section id="explore">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Find what you need</span>
+        <h2>Search categories &amp; FAQs</h2>
+        <p>Search across all GPAD categories and frequently asked questions on this page — try "urgent",
+          "admin", or "practice manager".</p>
+      </div>
+      <form class="search-box" role="search" id="searchForm">
+        <label for="siteSearch" class="visually-hidden" style="position:absolute;left:-9999px;">Search GPAD categories and FAQs</label>
+        <input type="text" id="siteSearch" placeholder="Search categories and FAQs…" autocomplete="off">
+        <button type="submit">Search</button>
+      </form>
+      <p class="search-meta" id="searchMeta" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- CATEGORIES / TAXONOMY -->
+  <section id="categories" class="section-pale">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">The national categories</span>
+        <h2>Anatomy of a slot</h2>
+        <p>Every slot in your appointment book fills in four fields — status type, whether it's bookable,
+          service setting, and context type. Together they decide whether a slot even counts as an
+          "appointment" nationally, and which bucket of workload it's counted in. Explore each field below.</p>
+      </div>
+
+      <div class="taxonomy-embed" id="taxonomyEmbed">
+        <div class="tax-hero">
+          <div class="tax-wrap">
+            <div class="tax-eyebrow">GPAD · General Practice Appointments Data</div>
+            <h3 class="tax-title">Every slot in your appointment book fills in four fields.</h3>
+            <p class="tax-lead">Status type, whether it's bookable, service setting, and context type. Together
+              they decide whether a slot even counts as an "appointment" nationally — and which bucket of
+              workload it's counted in. Click through each field below to see exactly what sits inside it.</p>
+
+            <div class="ticket">
+              <div class="ticket-main">
+                <div class="ticket-row">
+                  <div class="ticket-label">Status type</div>
+                  <div class="ticket-value">Face to Face (Surgery)</div>
+                </div>
+                <div class="ticket-row">
+                  <div class="ticket-label">Service setting</div>
+                  <div class="ticket-value">General Practice</div>
+                </div>
+                <div class="ticket-row">
+                  <div class="ticket-label">Context type · National category</div>
+                  <div class="ticket-value">Care Related Encounter → General Consultation Routine</div>
+                </div>
+              </div>
+              <div class="ticket-stub">
+                <div class="ticket-label">Bookable</div>
+                <div class="ticket-value">Yes</div>
+                <div class="ticket-label" style="margin-top:12px;">Auto DNA</div>
+                <div class="ticket-value">On</div>
+                <div class="stub-appt">counts as: 1 appointment</div>
+              </div>
+            </div>
+
+            <nav class="jumpnav" aria-label="Jump to taxonomy section">
+              <a href="#tax-status">Status type</a>
+              <a href="#tax-bookable">Bookable &amp; Auto DNA</a>
+              <a href="#tax-setting">Service setting</a>
+              <a href="#tax-context">Context type</a>
+            </nav>
+          </div>
+        </div>
+
+        <div>
+          <div class="tax-section" id="tax-status">
+            <div class="tax-wrap">
+              <div class="section-tag">Field 1</div>
+              <h4 class="tax-h2">Status type</h4>
+              <p class="section-note">How the contact actually happened. This is about the mode of contact, not
+                what it was for — that's what context type is for, further down.</p>
+              <div class="field-grid" id="statusGrid"></div>
+            </div>
+          </div>
+
+          <div class="tax-section" id="tax-bookable">
+            <div class="tax-wrap">
+              <div class="section-tag">Field 2</div>
+              <h4 class="tax-h2">Bookable &amp; Allow auto DNA</h4>
+              <p class="section-note">Two simple switches that sit alongside the slot type, controlling how a
+                patient can get into it and what happens if they don't show up.</p>
+              <div class="field-grid" id="bookableGrid"></div>
+            </div>
+          </div>
+
+          <div class="tax-section" id="tax-setting">
+            <div class="tax-wrap">
+              <div class="section-tag">Field 3</div>
+              <h4 class="tax-h2">Service setting</h4>
+              <p class="section-note">Who is actually delivering the appointment, and under which contractual
+                arrangement — this is what lets NHS England tell practice work apart from PCN work and outside
+                providers.</p>
+              <div class="field-grid" id="settingGrid"></div>
+            </div>
+          </div>
+
+          <div class="tax-section" id="tax-context">
+            <div class="tax-wrap">
+              <div class="section-tag">Field 4 · the big one</div>
+              <h4 class="tax-h2">Context type &amp; national category</h4>
+              <p class="section-note">Every slot type maps to exactly one of these three context types, and
+                within that, to one national category. Only <strong>Care Related Encounter</strong> categories
+                count as an "appointment" in the official statistics — the other two exist so practices have
+                somewhere accurate to put non-patient-facing work, not to hide it. Click a group to open it,
+                then click any category inside to see what belongs there.</p>
+              <div id="groupList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tax-footer">
+          <div class="tax-wrap">
+            <p>Based on NHS England's standardised GP appointment categories and the GPAD consolidated recording
+              guidance. Your clinical system supplier's own mapping guidance is the best place to check exactly
+              how a slot type is configured in your system.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="video">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Watch</span>
+        <p>Dr Raj Kanwar talks GPAD — a walkthrough of how GPAD categories work in practice, useful for a quick
+          team briefing or induction.</p>
+      </div>
+      <div class="video-wrap">
+        <div class="video-frame">
+          <video controls preload="metadata">
+            <source src="{{ url_for('static', filename='video/Dr_Raj_Kanwar_talks_GPAD.mp4') }}" type="video/mp4">
+            Your browser does not support embedded video.
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="kicker">Common questions</span>
+        <h2>Frequently asked questions</h2>
+        <p>Straight answers to the questions practice teams ask most often about GPAD.</p>
+      </div>
+      <div class="no-results" id="faqNoResults">No questions match your search.</div>
+      <div id="faqList"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <strong style="color:#fff; display:block; margin-bottom:6px;">Understanding GPAD</strong>
+      <p style="max-width:44ch; color:#b9cbe8;">An educational resource for GP practice teams. This site
+        explains General Practice Appointments Data (GPAD) in plain English — it is not an official NHS England
+        service.</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">
+        <li><a href="#what-is-gpad">What is GPAD?</a></li>
+        <li><a href="#why-it-matters">Why it matters</a></li>
+        <li><a href="#categories">Categories</a></li>
+        <li><a href="#video">Watch</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap legal">For official guidance, always refer to your practice's clinical system supplier and NHS England's published GPAD documentation.</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- DATA ----------
+  var categories = [
+    {
+      code:"GC-R",
+      color:"#005EB8",
+      name:"General Consultation Routine",
+      desc:"A planned, non-urgent appointment booked in advance — reviews, monitoring and scheduled check-ups.",
+      keywords:"routine planned booked review monitoring scheduled chronic disease long term condition",
+      examples:{
+        reception:[
+          "Booking a diabetic annual review requested at the front desk.",
+          "Scheduling a routine medication review two weeks ahead, as the clinician has requested.",
+          "Offering the next routine slot when a patient says their query isn't urgent."
+        ],
+        clinician:[
+          "Seeing a patient for a planned hypertension check and blood pressure review.",
+          "Carrying out a scheduled contraceptive implant review.",
+          "Completing a routine post-diagnosis follow-up that was booked weeks in advance."
+        ],
+        manager:[
+          "Reviewing routine appointment volume to plan clinic templates for the coming quarter.",
+          "Checking that routine slot types are consistently mapped to this category on the dashboard.",
+          "Using routine consultation trends to inform recall programme staffing."
+        ]
+      }
+    },
+    {
+      code:"GC-A",
+      color:"#DA291C",
+      name:"General Consultation Acute",
+      desc:"An appointment for a new problem that needs assessment on the same day or very soon after it arises.",
+      keywords:"acute urgent new problem same day emergency sudden",
+      examples:{
+        reception:[
+          "Fitting in a patient who calls describing a new, worsening symptom that started today.",
+          "Offering an on-the-day acute slot after triage flags a patient needs to be seen urgently.",
+          "Explaining to a patient why an acute problem is booked differently from a routine one."
+        ],
+        clinician:[
+          "Assessing a patient with sudden chest discomfort booked into an acute slot.",
+          "Reviewing a child with a new high fever the same afternoon.",
+          "Seeing a patient with an acute infection that has come on within the last day or two."
+        ],
+        manager:[
+          "Making sure enough acute capacity is built into each day's clinic template.",
+          "Monitoring how many acute slots are needed at different times of year, such as winter.",
+          "Reporting acute demand trends to the PCN to support same-day access planning."
+        ]
+      }
+    },
+    {
+      code:"GC-F",
+      color:"#41B6E6",
+      name:"General Consultation Follow-up",
+      desc:"A review of a problem that has already been discussed — checking progress, results or treatment response.",
+      keywords:"follow up review results check progress treatment response second appointment",
+      examples:{
+        reception:[
+          "Booking a follow-up appointment the clinician requested after a previous consultation.",
+          "Arranging a review two weeks after a new medication was started, as instructed.",
+          "Scheduling a wound check requested at a patient's last visit."
+        ],
+        clinician:[
+          "Reviewing blood test results with a patient at a pre-arranged follow-up.",
+          "Checking how a patient has responded to a new treatment plan started last month.",
+          "Following up a referral outcome with the patient who was originally seen."
+        ],
+        manager:[
+          "Tracking how many consultations are follow-ups versus new problems, to understand continuity of care.",
+          "Ensuring follow-up appointments are mapped correctly rather than counted as routine.",
+          "Using follow-up volume data to assess the impact of a new clinical pathway."
+        ]
+      }
+    },
+    {
+      code:"CRE",
+      color:"#009639",
+      name:"Care-related Encounter",
+      desc:"Contact that supports a patient's ongoing care without necessarily being a traditional consultation.",
+      keywords:"care related encounter care home safeguarding coordination liaison social",
+      examples:{
+        reception:[
+          "Logging a call from a care home about a resident's medication query.",
+          "Recording contact with a family member coordinating care for a housebound patient.",
+          "Passing on a message between a district nurse and the GP about a shared patient."
+        ],
+        clinician:[
+          "A round of calls to care home residents as part of a scheduled care home visit.",
+          "A safeguarding conversation with a multidisciplinary team about a vulnerable patient.",
+          "Liaising with a community pharmacist about a patient's ongoing medicine support."
+        ],
+        manager:[
+          "Making sure care home visiting time is captured as care-related activity, not left unrecorded.",
+          "Reviewing how much team time goes into coordination work rather than direct consultations.",
+          "Using this category to evidence the practice's role in wider multidisciplinary care."
+        ]
+      }
+    },
+    {
+      code:"CADM",
+      color:"#330072",
+      name:"Clinical Administration",
+      desc:"Clinical time spent on paperwork and coordination rather than seeing a patient directly.",
+      keywords:"admin administration paperwork prescriptions letters coding referrals forms",
+      examples:{
+        reception:[
+          "Passing on a prescription query for a clinician to review outside of a face-to-face slot.",
+          "Logging an incoming hospital letter for the duty doctor to action.",
+          "Booking clinical admin time into a clinician's template for results and letters."
+        ],
+        clinician:[
+          "Reviewing and signing a batch of repeat prescriptions.",
+          "Reading and actioning hospital discharge letters and outpatient correspondence.",
+          "Completing insurance or fit note paperwork for a patient not seen that day."
+        ],
+        manager:[
+          "Protecting dedicated clinical admin time in clinic templates so it isn't squeezed out.",
+          "Using admin time data to make the case for additional administrative support roles.",
+          "Checking the dashboard for slots wrongly left uncategorised that should be admin."
+        ]
+      }
+    },
+    {
+      code:"UPC",
+      color:"#FFB81C",
+      name:"Unplanned Care",
+      desc:"Unscheduled care arising on the day — emergency add-ons, home visits for a deteriorating patient, or walk-ins.",
+      keywords:"unplanned unscheduled emergency walk in home visit deteriorating extra",
+      examples:{
+        reception:[
+          "Fitting in a walk-in patient who arrives distressed and cannot wait for a booked slot.",
+          "Arranging an emergency home visit request that comes in mid-morning.",
+          "Adding an extra same-day slot when a patient's condition is reported as worsening."
+        ],
+        clinician:[
+          "Attending an urgent home visit for a housebound patient who has deteriorated.",
+          "Seeing a walk-in patient with an unexpected injury.",
+          "Responding to an unscheduled request from the duty team during a busy clinic."
+        ],
+        manager:[
+          "Monitoring how much daily capacity unplanned care actually consumes.",
+          "Using unplanned care volumes to justify buffer slots in the daily template.",
+          "Reporting unplanned care trends to the ICB to support wider urgent care planning."
+        ]
+      }
+    }
+  ];
+
+  var faqs = [
+    {
+      q:"Do I need to do anything differently at reception?",
+      a:"Mostly no — you keep booking appointments as usual. The main change is making sure the slot type you choose matches the national category it maps to, so it's worth knowing what each category covers.",
+      keywords:"reception different change slot type booking"
+    },
+    {
+      q:"What happens if an appointment is put in the wrong category?",
+      a:"It isn't a disciplinary issue — GPAD is about improving accuracy over time. Practice managers can use the practice-level dashboard to spot mapping gaps and correct them, and clinical system suppliers provide guidance on configuring appointment books correctly.",
+      keywords:"wrong category mistake error correct mapping"
+    },
+    {
+      q:"Does GPAD only count face-to-face appointments?",
+      a:"No. GPAD includes telephone contacts, home visits, online consultations and clinical admin time — the aim is to capture the full range of work a practice does, not just appointments where a patient walks through the door.",
+      keywords:"face to face telephone online home visit remote"
+    },
+    {
+      q:"Who can see our practice's GPAD data?",
+      a:"Practices can see their own detailed data through the practice-level GPAD dashboard. Aggregated, less granular data is used by PCNs, ICBs and nationally — individual patient identity is not part of the published dataset.",
+      keywords:"who sees data privacy confidential practice level dashboard access"
+    },
+    {
+      q:"Why are there only a small number of national categories?",
+      a:"Every practice's local appointment book looks different. A small, standard set of categories means activity can be compared fairly and consistently across practices, PCNs and regions, rather than each practice reporting in its own local language.",
+      keywords:"why few categories standard national comparison"
+    },
+    {
+      q:"How does GPAD relate to the same-day access requirement for urgent patients?",
+      a:"National categories are used to check how quickly patients identified as clinically urgent are seen. Recording acute and unplanned care accurately is part of demonstrating that same-day commitments are being met.",
+      keywords:"same day access urgent contract requirement clinically urgent"
+    },
+    {
+      q:"Is GPAD data used to judge individual clinicians?",
+      a:"No — GPAD is designed to give a picture of practice and system-level workload and demand, not to performance-manage individual staff members.",
+      keywords:"individual clinician judge performance manage staff"
+    },
+    {
+      q:"Where can practice managers go for more detailed guidance?",
+      a:"Your clinical system supplier's guidance and NHS England's published GPAD documentation are the best sources for detailed, up-to-date technical guidance on category mapping.",
+      keywords:"practice manager guidance more information detailed technical"
+    }
+  ];
+
+  // ---------- RENDER: HERO STRIP ----------
+  var strip = document.getElementById("heroStrip");
+  var legend = document.getElementById("heroLegend");
+  categories.forEach(function(cat, i){
+    var b = document.createElement("button");
+    b.className = "slot";
+    b.style.background = cat.color;
+    b.title = cat.name;
+    b.setAttribute("aria-label", "Jump to " + cat.name);
+    b.addEventListener("click", function(){
+      var target = document.getElementById("categories");
+      if(target){ target.scrollIntoView({behavior:"smooth", block:"start"}); }
+    });
+    strip.appendChild(b);
+
+    var item = document.createElement("span");
+    item.className = "item";
+    item.innerHTML = '<span class="swatch" style="background:'+cat.color+'"></span>' + cat.name;
+    legend.appendChild(item);
+  });
+
+  // ---------- RENDER: FAQ ----------
+  var faqList = document.getElementById("faqList");
+  faqs.forEach(function(item, i){
+    var wrap = document.createElement("div");
+    wrap.className = "faq-item";
+    wrap.dataset.search = (item.q + " " + item.a + " " + item.keywords).toLowerCase();
+
+    var q = document.createElement("button");
+    q.className = "faq-q";
+    q.setAttribute("aria-expanded","false");
+    q.innerHTML = "<span>" + item.q + "</span><span class='chev'>+</span>";
+    q.addEventListener("click", function(){
+      var isOpen = wrap.classList.contains("open");
+      wrap.classList.toggle("open", !isOpen);
+      q.setAttribute("aria-expanded", String(!isOpen));
+    });
+
+    var a = document.createElement("div");
+    a.className = "faq-a";
+    var ap = document.createElement("p");
+    ap.textContent = item.a;
+    a.appendChild(ap);
+
+    wrap.appendChild(q);
+    wrap.appendChild(a);
+    faqList.appendChild(wrap);
+  });
+
+  // ---------- MOBILE NAV ----------
+  var navToggle = document.getElementById("navToggle");
+  var primaryNav = document.getElementById("primary-nav");
+  navToggle.addEventListener("click", function(){
+    var isOpen = primaryNav.classList.toggle("open");
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+  primaryNav.querySelectorAll("a").forEach(function(link){
+    link.addEventListener("click", function(){
+      primaryNav.classList.remove("open");
+      navToggle.setAttribute("aria-expanded","false");
+    });
+  });
+
+  // ---------- SEARCH ----------
+  var searchForm = document.getElementById("searchForm");
+  var searchInput = document.getElementById("siteSearch");
+  var searchMeta = document.getElementById("searchMeta");
+  var faqNoResults = document.getElementById("faqNoResults");
+
+  function runSearch(){
+    var term = searchInput.value.trim().toLowerCase();
+    var faqItems = faqList.querySelectorAll(".faq-item");
+
+    faqItems.forEach(function(item){
+      var match = term === "" || item.dataset.search.indexOf(term) !== -1;
+      item.classList.toggle("is-hidden", !match);
+      if(match && term !== ""){
+        item.classList.add("open");
+        item.querySelector(".faq-q").setAttribute("aria-expanded","true");
+      }
+    });
+
+    var faqCount = Array.prototype.filter.call(faqItems, function(i){ return !i.classList.contains("is-hidden"); }).length;
+    faqNoResults.classList.toggle("show", faqCount === 0 && term !== "");
+
+    if(term === ""){
+      searchMeta.textContent = "";
+    } else {
+      searchMeta.textContent = 'Showing ' + faqCount + ' FAQ' + (faqCount === 1 ? '' : 's') +
+        ' matching "' + searchInput.value.trim() + '".';
+    }
+  }
+
+  searchForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    runSearch();
+    var firstVisible = faqList.querySelector(".faq-item:not(.is-hidden)");
+    if(firstVisible && searchInput.value.trim() !== ""){
+      document.getElementById("explore").scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  });
+  searchInput.addEventListener("input", runSearch);
+
+  // ---------- TAXONOMY EMBED: render fields & category groups ----------
+  var taxStatusTypes = [
+    {name:"Face to Face (Surgery)", color:"var(--tax-blue)", desc:"The patient is seen in person at the practice premises."},
+    {name:"Telephone/Audio", color:"var(--tax-teal)", desc:"A voice-only contact, whether a call the practice made or one the patient rang in for."},
+    {name:"Face to Face (Home visit)", color:"var(--tax-clay)", desc:"The patient is seen in person, but at their home or another out-of-practice setting such as a care home."},
+    {name:"Written (including online)", color:"var(--tax-plum)", desc:"Online consultation submissions, e-consult forms, secure messaging, letters, or any other written exchange — no live conversation takes place."},
+    {name:"Not an appointment", color:"var(--tax-muted)", desc:"Used where the slot doesn't meet the agreed definition of an appointment at all, regardless of what else is recorded against it."}
+  ];
+
+  var taxBookableFields = [
+    {name:"Bookable", color:"var(--tax-blue)", desc:"A tick box that marks whether this slot type can be offered for a patient (or reception, on their behalf) to book into directly — for example via the NHS App or online booking. Untick it for slots meant for internal or clinician-only use, like triage output slots."},
+    {name:"Allow auto DNA", color:"var(--tax-clay)", desc:"Controls whether the system will automatically change a slot's status to 'Did Not Attend' once its time has passed with no outcome recorded, rather than needing a staff member to set that status by hand."}
+  ];
+
+  var taxServiceSettings = [
+    {name:"General practice", color:"var(--tax-blue)", desc:"Used for the great majority of appointments — anything delivered by practice staff under the GMS, PMS or APMS contract."},
+    {name:"Primary care network", color:"var(--tax-teal)", desc:"Used for appointments delivered by staff employed under the Additional Roles Reimbursement Scheme (ARRS), or delivered to meet a Network Contract DES requirement, such as Structured Medication Reviews or care home rounds."},
+    {name:"Extended access provision", color:"var(--tax-plum)", desc:"Used for appointments commissioned specifically as part of extended access arrangements — the evening and weekend access hubs, rather than the practice's own core hours."},
+    {name:"Other", color:"var(--tax-muted)", desc:"Used to record appointments delivered in the practice by a different provider altogether, or under a separate contract or commissioning arrangement, such as an outside sexual health service using practice premises."}
+  ];
+
+  var taxGroups = [
+    {
+      key:"cre", color:"var(--tax-blue)",
+      name:"Care related encounter",
+      desc:"Involves the patient directly, in any mode — face-to-face, phone, video, online or a home visit. These are the only categories counted as an appointment nationally.",
+      cats:[
+        {name:"Care related encounter but does not fit into any other category", desc:"A genuine patient encounter that doesn't match any of the more specific categories below. Still counted as an appointment — it's a safety net, not a place to default everything to."},
+        {name:"Care home needs assessment & personalised care and support planning", desc:"A needs assessment or personalised care and support plan delivered to a care home resident, typically as part of the Enhanced Health in Care Homes service requirement.", examples:"Needs assessment, personalised care and support plan"},
+        {name:"Care home visit", desc:"An in-person (or virtual) consultation carried out in a care home or similar out-of-practice setting, whether planned or arising on the day. Each resident seen gets their own separate entry, even if the clinician visits several people in one trip.", examples:"Care home round visit, care home COVID-19 vaccination"},
+        {name:"Clinical triage", desc:"A slot whose main purpose is a healthcare professional clinically assessing and directing a patient — it may resolve the issue there and then, or route them elsewhere. This is the category for reviewing online consultation submissions too. It should not be used for purely administrative sorting that never involves a clinician.", examples:"GP telephone triage, online consultation review, nurse triage"},
+        {name:"General consultation acute", desc:"An urgent or on-the-day appointment for a new problem, a sudden worsening of an existing one, or another pressing health concern that needs to be seen the same day.", examples:"On-the-day appointment, urgent slot, NHS 111 referral"},
+        {name:"General consultation routine", desc:"The everyday, non-urgent consultation — a routine problem, an undifferentiated new issue, or a standard follow-up review that isn't urgent.", examples:"Routine appointment, follow-up review, planned telephone call"},
+        {name:"General consultation and group education", desc:"A shared appointment where a clinician sees or advises several patients together in the same session, including group video clinics. Each patient present is still counted as a separate appointment.", examples:"Smoking cessation group, group asthma clinic, parent and baby health session"},
+        {name:"Home visit", desc:"An in-person consultation at a patient's own home, whether requested by the patient or arranged by the practice, for a planned or urgent reason. A video call to someone at home doesn't count here — it goes under whatever category fits the reason for contact.", examples:"Patient-requested home visit, urgent home visit, home vaccination"},
+        {name:"Planned clinical procedure", desc:"A specific clinical procedure, requiring particular skills, equipment or drugs, booked in advance for a known intervention.", examples:"Blood tests, cervical smear, spirometry, minor surgery, vaccination clinic"},
+        {name:"Planned clinic", desc:"Structured clinical activity for a patient with an already-known problem or care pathway, arranged in advance — these often run as longer or double slots.", examples:"Antenatal booking, chronic disease review, physiotherapy, counselling"},
+        {name:"Service provided by organisation external to the practice", desc:"A service delivered by an outside organisation using practice premises, unconnected to the practice's own contract or the Network Contract DES.", examples:"Citizens Advice, community psychiatry, housing support, Macmillan nurse"},
+        {name:"Social prescribing service", desc:"An appointment with a social prescribing link worker, health and wellbeing coach, or care co-ordinator, delivered as part of the Network Contract DES social prescribing requirement."},
+        {name:"Structured medication review", desc:"A Structured Medication Review (SMR) delivered specifically as part of the Network Contract DES medicines optimisation requirement — practices not signed up to that DES should use a general consultation category instead."},
+        {name:"Unplanned clinical activity", desc:"An extra slot squeezed into an already-planned session to cope with same-day demand that exceeds what was scheduled — created either by splitting an existing slot or adding a new one.", examples:"Doctor squeeze-in, nurse squeeze-in, practice emergency"},
+        {name:"Walk-in", desc:"An open clinic session where patients don't hold a personal appointment time and are seen as they arrive.", examples:"Walk-in flu clinic, drop-in bloods, walk-in chest pain clinic"}
+      ]
+    },
+    {
+      key:"cra", color:"var(--tax-teal)",
+      name:"Care related activity",
+      desc:"About the patient, but doesn't involve them directly — clinical tasks carried out on their behalf. These slots are not counted as appointments in the national figures.",
+      cats:[
+        {name:"Care related activity but does not fit into any other category", desc:"Genuine clinical work related to a patient that doesn't involve them and doesn't match either category below."},
+        {name:"Multidisciplinary team meeting / patient collaboration planning", desc:"A meeting of several healthcare professionals discussing named patients, without those patients present.", examples:"Safeguarding meetings, palliative care planning, MARAC meetings"},
+        {name:"Patient clinical admin", desc:"Clinical admin carried out by a single healthcare professional on a patient's behalf, not in front of them — this shouldn't include clinical triage of online consultations, which belongs under Clinical Triage instead.", examples:"Writing referral letters, signing repeat prescriptions, reviewing results"}
+      ]
+    },
+    {
+      key:"apsa", color:"var(--tax-plum)",
+      name:"Administration and practice staff activities",
+      desc:"Running the practice and its staff — nothing to do with an individual patient's care. Also not counted as appointments; practices aren't expected to record all of this in the appointment book, but if they do, it should map here.",
+      cats:[
+        {name:"Admin and practice staff related activities but does not fit into any other category", desc:"Any other practice or staff admin that doesn't match one of the more specific categories below."},
+        {name:"Break and staff absence", desc:"A break during a session, or a staff absence recorded in the appointment system.", examples:"Coffee break, lunch break, annual leave, sick leave"},
+        {name:"Business/practice management activities", desc:"Activity and administration that keeps the practice running, plus quality improvement and research administration.", examples:"Team meetings, QOF preparation, supplier meetings, audits"},
+        {name:"Clinical housekeeping/admin", desc:"Behind-the-scenes clinical upkeep that isn't focused on any one patient — aimed at the quality and safety of care overall rather than an individual case.", examples:"Fridge checks, room clean-down, infection control checks"},
+        {name:"Providing training / mentoring / supervising", desc:"A healthcare professional acting as trainer or mentor, sharing knowledge with others — individually or in a group, and not a patient-bookable slot.", examples:"Mentoring a registrar, joint surgery with a trainee, registrar debrief"},
+        {name:"Receiving training / being the mentee / being supervised", desc:"Time spent undergoing training, coaching, or supervision — again, not a patient-bookable slot.", examples:"Protected learning time, training courses, registrar catch-up"}
+      ]
+    }
+  ];
+
+  function renderTaxFieldGrid(containerId, items){
+    var grid = document.getElementById(containerId);
+    if(!grid) return;
+    items.forEach(function(item){
+      var card = document.createElement("div");
+      card.className = "field-card";
+      card.style.setProperty("--accent", item.color);
+      var head = document.createElement("button");
+      head.className = "field-head";
+      head.setAttribute("aria-expanded","false");
+      head.innerHTML = "<h3>" + item.name + "</h3><span class='plus'>+</span>";
+      var body = document.createElement("div");
+      body.className = "field-body";
+      var p = document.createElement("p");
+      p.textContent = item.desc;
+      body.appendChild(p);
+      head.addEventListener("click", function(){
+        var open = card.classList.toggle("open");
+        head.setAttribute("aria-expanded", String(open));
+      });
+      card.appendChild(head);
+      card.appendChild(body);
+      grid.appendChild(card);
+    });
+  }
+  renderTaxFieldGrid("statusGrid", taxStatusTypes);
+  renderTaxFieldGrid("bookableGrid", taxBookableFields);
+  renderTaxFieldGrid("settingGrid", taxServiceSettings);
+
+  var taxGroupList = document.getElementById("groupList");
+  if(taxGroupList){
+    taxGroups.forEach(function(g){
+      var groupEl = document.createElement("div");
+      groupEl.className = "group";
+      groupEl.style.setProperty("--accent", g.color);
+
+      var head = document.createElement("button");
+      head.className = "group-head";
+      head.setAttribute("aria-expanded","false");
+      head.innerHTML =
+        "<span class='group-head-text'><h3>" + g.name + "</h3><p>" + g.desc + "</p></span>" +
+        "<span class='group-count'>" + g.cats.length + " categories</span>" +
+        "<span class='group-chevron'>&#9662;</span>";
+      head.addEventListener("click", function(){
+        var open = groupEl.classList.toggle("open");
+        head.setAttribute("aria-expanded", String(open));
+      });
+
+      var body = document.createElement("div");
+      body.className = "group-body";
+      var list = document.createElement("div");
+      list.className = "cat-list";
+
+      g.cats.forEach(function(cat, i){
+        var item = document.createElement("div");
+        item.className = "cat-item";
+        var btn = document.createElement("button");
+        btn.className = "cat-btn";
+        btn.setAttribute("aria-expanded","false");
+        btn.innerHTML = "<span class='num'>" + String(i+1).padStart(2,"0") + "</span>" +
+          "<span class='name'>" + cat.name + "</span><span class='chev'>&#8250;</span>";
+        var detail = document.createElement("div");
+        detail.className = "cat-detail";
+        var inner = document.createElement("div");
+        inner.className = "cat-detail-inner";
+        var p = document.createElement("p");
+        p.textContent = cat.desc;
+        inner.appendChild(p);
+        if(cat.examples){
+          var ex = document.createElement("div");
+          ex.className = "examples";
+          ex.innerHTML = "<b>Typical slot names</b>" + cat.examples;
+          inner.appendChild(ex);
+        }
+        detail.appendChild(inner);
+        btn.addEventListener("click", function(){
+          var open = item.classList.toggle("open");
+          btn.setAttribute("aria-expanded", String(open));
+        });
+        item.appendChild(btn);
+        item.appendChild(detail);
+        list.appendChild(item);
+      });
+
+      body.appendChild(list);
+      groupEl.appendChild(head);
+      groupEl.appendChild(body);
+      taxGroupList.appendChild(groupEl);
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Resource{% endblock %}
+{% block content %}
+
+  <header class="hero" style="padding:56px 0 48px;">
+    <div class="wrap">
+      <span class="eyebrow">Articles &middot; News &middot; Case studies &middot; Team insights</span>
+      <h1>Resource</h1>
+      <p class="lead">Everything the Digital Champions team has been sharing recently — updates, guides, and the Resource Centre for training material and downloads.</p>
+    </div>
+  </header>
+
+  <section class="news" id="news">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">News feed</span>
+        <h2>Updates from the team</h2>
+      </div>
+      <div class="news-grid">
+        <a class="news-item" href="#">
+          <div class="news-thumb" style="background:#eaf3e1;color:#5b8a2e;">SESSION</div>
+          <div>
+            <p class="news-title">Digital Champions NHS App Session</p>
+            <p class="news-desc">The Digital Champions team will be supporting a drop-in NHS App session — come along with questions.</p>
+            <p class="news-meta">Digital Champions Team</p>
+          </div>
+        </a>
+        <a class="news-item" href="#">
+          <div class="news-thumb" style="background:#e4eefb;color:#2a6fb0;">ROADMAP</div>
+          <div>
+            <p class="news-title">Take a look at the NHS App Roadmap</p>
+            <p class="news-desc">Find out what has been improved, what we are currently working on, and what's coming next.</p>
+            <p class="news-meta">Digital Champions Team</p>
+          </div>
+        </a>
+        <a class="news-item" href="#">
+          <div class="news-thumb" style="background:#f4e9f9;color:#7a3fa0;">AWARDS</div>
+          <div>
+            <p class="news-title">HSJ Awards</p>
+            <p class="news-desc">2026 has got off to a good start for the Digital Champions — details on this year's nomination.</p>
+            <p class="news-meta">Practice Team</p>
+          </div>
+        </a>
+        <a class="news-item" href="{{ url_for('gpad') }}">
+          <div class="news-thumb" style="background:#e6f5f3;color:#00a99d;">GPAD</div>
+          <div>
+            <p class="news-title">Understanding GPAD</p>
+            <p class="news-desc">A new guide and short video from Dr Raj Kanwar explaining how appointment data is recorded.</p>
+            <p class="news-meta">Digital Champions Team</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="team-insight">
+    <div class="wrap">
+      <div class="spotlight">
+        <div>
+          <span class="eyebrow">Team insight</span>
+          <h2>Understanding GPAD, explained by Dr Raj Kanwar</h2>
+          <p>A short guide and video walking through how General Practice Appointments Data actually gets categorised — useful for anyone who books, manages or reports on appointments.</p>
+          <a class="btn btn-lime" href="{{ url_for('gpad') }}" target="_blank" rel="noopener">Open the GPAD guide</a>
+        </div>
+        <a class="play-card" href="{{ url_for('gpad') }}" target="_blank" rel="noopener">
+          <span class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+          <span>
+            <p class="who">Dr Raj Kanwar talks GPAD</p>
+            <p class="what">Guide + video &middot; opens in a new tab</p>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="coverage" id="resources">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Resource centre</span>
+        <h2>Find resources and information when you need it.</h2>
+        <p>Resources produced and collated for you to download and share with your practice(s) and teams — plus the latest training opportunities from the Training Hub.</p>
+      </div>
+
+      <div class="emis-banner">
+        <h3><b>EMIS Web</b> General Training</h3>
+        <span>presented by the Digital Champions</span>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn btn-outline" style="background:#fff;" href="https://swgpf.sharepoint.com/sites/DigitalChampions/SitePages/Book-EMIS-training-with-us.aspx" target="_blank" rel="noopener">Book EMIS training</a>
+          <a class="btn btn-outline" href="mailto:contact@cwdigitalchampions.nhs.uk" style="border-color:rgba(255,255,255,.7); color:#fff;">More information</a>
+        </div>
+      </div>
+
+      <div class="tile-grid">
+        <a class="res-tile" href="#">Accurx resources</a>
+        <a class="res-tile" href="#">AI resources</a>
+        <a class="res-tile" href="#">DHSC Campaigns</a>
+        <a class="res-tile" href="#">DSP Toolkit</a>
+        <a class="res-tile" href="#">EMIS Content</a>
+        <a class="res-tile featured" href="{{ url_for('gpad') }}" target="_blank">GPAD Information</a>
+        <a class="res-tile" href="#">NHS App Resources</a>
+        <a class="res-tile" href="#">PCIT Resources</a>
+        <a class="res-tile" href="#">Other Files</a>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

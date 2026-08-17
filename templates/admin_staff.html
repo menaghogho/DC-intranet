@@ -1,0 +1,98 @@
+{% extends "admin_base.html" %}
+{% block title %}Staff access{% endblock %}
+{% block content %}
+
+  <header class="contact-hero">
+    <div class="wrap">
+      <span class="eyebrow" style="color:var(--nhs-blue); background:#fff; border:1px solid var(--nhs-mid-grey); padding:7px 14px; border-radius:20px; margin-bottom:20px; display:inline-flex;">Admin</span>
+      <h1>Who has access</h1>
+      <p>Everyone who has registered a staff account on this intranet. Registration is currently open to anyone who reaches
+        <code>/register</code> — there's no invite code or approval step, so review this list periodically.</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">{{ accounts|length }} account{{ 's' if accounts|length != 1 }}</span>
+        <h2>Registered staff</h2>
+        <p>
+          {% if current_user.is_root_admin %}
+            Root admins are set in <code>.env</code> (<code>ADMIN_EMAILS</code>) and can promote or demote other
+            admins from here. Root: {{ admin_emails|join(', ') if admin_emails else 'none set' }}.
+          {% else %}
+            You're an admin, promoted by a root admin. Only root admins (set in <code>.env</code>) can promote or
+            demote other accounts.
+          {% endif %}
+        </p>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Place</th>
+              <th>Practice</th>
+              <th>Role</th>
+              <th>Registered</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in accounts %}
+              <tr>
+                <td>{{ a.name }}</td>
+                <td><a href="mailto:{{ a.email }}">{{ a.email }}</a></td>
+                <td>{{ a.place }}</td>
+                <td>{{ a.practice_name }}</td>
+                <td>
+                  {% if a.is_root_admin %}
+                    <span class="role-badge role-badge-root">Root admin</span>
+                  {% elif a.role == 'admin' %}
+                    <span class="role-badge role-badge-admin">Admin</span>
+                  {% else %}
+                    <span class="role-badge role-badge-staff">Staff</span>
+                  {% endif %}
+                </td>
+                <td>{{ a.created_at }}</td>
+                <td>
+                  <div class="admin-actions">
+                    {% if a.id == current_user.id %}
+                      <span style="color:var(--nhs-grey); font-size:12.5px;">You</span>
+                    {% else %}
+                      {% if current_user.is_root_admin and not a.is_root_admin %}
+                        {% if a.role == 'admin' %}
+                          <form method="post" action="{{ url_for('admin_staff_demote', staff_id=a.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" class="admin-demote-btn">Remove admin</button>
+                          </form>
+                        {% else %}
+                          <form method="post" action="{{ url_for('admin_staff_promote', staff_id=a.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <button type="submit" class="admin-promote-btn">Make admin</button>
+                          </form>
+                        {% endif %}
+                      {% endif %}
+                      {% if not a.is_root_admin %}
+                        <form method="post" action="{{ url_for('admin_staff_delete', staff_id=a.id) }}"
+                              onsubmit="return confirm('Revoke access for {{ a.name|e }}? This deletes their account.');">
+                          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                          <button type="submit" class="admin-revoke-btn">Revoke</button>
+                        </form>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+              <tr><td colspan="7">No accounts yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
